@@ -1,0 +1,178 @@
+@baseUrl = http://localhost:5080
+
+### Browse the first page of available cars
+GET {{baseUrl}}/api/v1/listings
+
+### Browse with every filter. "all" is the query value for available and sold.
+GET {{baseUrl}}/api/v1/listings?make=Honda&model=Civic&location=Oakland&minYear=2010&maxYear=2020&minPrice=1000&maxPrice=30000&maxMileage=80000&status=all&page=1
+
+### A page past the end still returns the real total count
+GET {{baseUrl}}/api/v1/listings?page=9999
+
+### Listing detail. Replace the id after publishing.
+GET {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000
+
+### Photo bytes. Replace the id.
+GET {{baseUrl}}/api/v1/photos/00000000-0000-0000-0000-000000000000
+
+### Register
+POST {{baseUrl}}/api/v1/sellers
+Content-Type: application/json
+
+{
+  "displayName": "North Yard Motors",
+  "email": "seller@example.com",
+  "password": "test-pass-8"
+}
+
+### Duplicate email, different letter case
+POST {{baseUrl}}/api/v1/sellers
+Content-Type: application/json
+
+{
+  "displayName": "North Yard Motors",
+  "email": "Seller@Example.com",
+  "password": "test-pass-8"
+}
+
+### Current seller
+GET {{baseUrl}}/api/v1/sellers/me
+
+### Sign in
+POST {{baseUrl}}/api/v1/sessions
+Content-Type: application/json
+
+{
+  "email": "seller@example.com",
+  "password": "test-pass-8"
+}
+
+### Failed sign-in
+POST {{baseUrl}}/api/v1/sessions
+Content-Type: application/json
+
+{
+  "email": "seller@example.com",
+  "password": "wrong-password"
+}
+
+### Sign out
+DELETE {{baseUrl}}/api/v1/sessions/current
+
+### Publish a listing
+# Attach 1 to 10 JPEG, PNG, or WebP files in the photos parts. The first file is the cover.
+POST {{baseUrl}}/api/v1/listings
+Content-Type: multipart/form-data; boundary=marketplace
+
+--marketplace
+Content-Disposition: form-data; name="make"
+
+Honda
+--marketplace
+Content-Disposition: form-data; name="model"
+
+Civic
+--marketplace
+Content-Disposition: form-data; name="year"
+
+2018
+--marketplace
+Content-Disposition: form-data; name="price"
+
+15000.50
+--marketplace
+Content-Disposition: form-data; name="mileage"
+
+42000
+--marketplace
+Content-Disposition: form-data; name="location"
+
+Oakland, CA
+--marketplace
+Content-Disposition: form-data; name="description"
+
+A clean commuter with a full service history.
+--marketplace
+Content-Disposition: form-data; name="photos"; filename="civic.png"
+Content-Type: image/png
+
+< ./samples/pixel.png
+--marketplace--
+
+### Seller's own listings, including sold cars
+GET {{baseUrl}}/api/v1/sellers/me/listings?page=1
+
+### Replace listing facts. publishedAt stays the same.
+PUT {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000
+Content-Type: application/json
+
+{
+  "make": "Honda",
+  "model": "Civic",
+  "year": 2018,
+  "price": 12345.50,
+  "mileage": 42000,
+  "location": "Oakland, CA",
+  "description": "A clean commuter with a full service history."
+}
+
+### Replace photos. Send 1 to 10 files, cover first. Zero files keeps the previous photos.
+PUT {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/photos
+Content-Type: multipart/form-data; boundary=marketplace
+
+--marketplace
+Content-Disposition: form-data; name="photos"; filename="civic.png"
+Content-Type: image/png
+
+< ./samples/pixel.png
+--marketplace--
+
+### Mark the car sold
+PATCH {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/status
+Content-Type: application/json
+
+{
+  "status": "Sold"
+}
+
+### Mark the car available
+PATCH {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/status
+Content-Type: application/json
+
+{
+  "status": "Available"
+}
+
+### Send an inquiry
+POST {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/inquiries
+Content-Type: application/json
+
+{
+  "name": "Amina Cole",
+  "email": "amina@example.com",
+  "phone": "+1 (415) 555-0134",
+  "message": "Is the mileage in kilometers, and is the car still available?"
+}
+
+### Inquiry on a sold listing
+POST {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/inquiries
+Content-Type: application/json
+
+{
+  "name": "Amina Cole",
+  "email": "amina@example.com",
+  "message": "Is this car still available for a visit?"
+}
+
+### Owner inquiry, which is refused
+POST {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/inquiries
+Content-Type: application/json
+
+{
+  "name": "North Yard Motors",
+  "email": "seller@example.com",
+  "message": "This is my own listing and should be refused."
+}
+
+### Owner reads inquiries, newest first
+GET {{baseUrl}}/api/v1/listings/00000000-0000-0000-0000-000000000000/inquiries

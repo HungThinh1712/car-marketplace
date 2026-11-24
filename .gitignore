@@ -1,0 +1,13 @@
+bin/
+obj/
+.vs/
+node_modules/
+.next/
+*.tsbuildinfo
+.env
+.env.local
+frontend/.env.local
+backend/storage/photos/
+*.user
+*.suo
+*.log

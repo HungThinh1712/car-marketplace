@@ -1,26 +1,20 @@
-# Car Marketplace Specifications
+# Car Marketplace
 
-Specifications for a public website where people sell cars. The planned stack is a Next.js frontend, a .NET API, and MySQL. Application code is not in this repository.
+Public car marketplace: specification, Next.js frontend, and .NET API with MySQL.
 
-## Business analysis
+## Specification
 
 - `.specify/memory/constitution.md` — product principles
 - `specs/001-car-marketplace/spec.md` — first-release behavior
-- `specs/001-car-marketplace/checklists/requirements.md` — spec quality checklist
-- `working-artifacts/user-stories/car-marketplace/car-marketplace-stories.md` — vertical-slice stories
+- `specs/001-car-marketplace/plan.md` — implementation plan
+- `specs/001-car-marketplace/tasks.md` — task list
+- `specs/001-car-marketplace/contracts/marketplace-api.md` — API contract
+- `working-artifacts/user-stories/car-marketplace/car-marketplace-stories.md` — user stories
 
-## Development
+## Application
 
-- `specs/001-car-marketplace/plan.md`
-- `specs/001-car-marketplace/research.md`
-- `specs/001-car-marketplace/data-model.md`
-- `specs/001-car-marketplace/contracts/marketplace-api.md`
-- `specs/001-car-marketplace/quickstart.md`
-- `specs/001-car-marketplace/tasks.md`
+- `frontend/` — Next.js site
+- `backend/` — ASP.NET Core API
+- `docker-compose.yml` — MySQL 8.4 for local development
 
-## Test review
-
-- `specs/001-car-marketplace/checklists/requirements-quality.md` — requirements-quality checklist
-- `specs/001-car-marketplace/analysis-report.md` — consistency review before implementation
-
-Five high findings in the analysis report still need to be accepted or edited before implementation starts.
+Copy `.env.example` to `.env` and set the database passwords before starting MySQL. The `.env` file is not committed. Copy `API_ORIGIN=http://localhost:5080` into `frontend/.env.local`.
